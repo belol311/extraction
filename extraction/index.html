@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="face-api.js"></script>
+    <script src="models/faceDetectionControls.js"></script>
+    <script src="models/imageSelectionControls.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+  </head>
+
+<style>
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    #uploadImg{
+        position: relative;
+    }
+
+    #inputImg {
+        position:relative;
+        bottom: 400px;
+        left:-300px;
+        max-width: 800px;
+        max-height: 300px;
+    }
+</style>
+<body>
+    <div id="imgSpace"></div>
+    <input id="uploadImg" type="file" accept="image/*" onchange="showImage(this)"></input>
+    <img id="inputImg" src=""/>
+    <canvas id="overlay"></canvas>
+
+
+<script>
+    function showImage(input){
+        if(input.files && input.files[0]){
+        const reader = new FileReader();
+        reader.onload=function(e){
+            document.getElementById("inputImg").src=e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+    } else{
+        document.getElementById("inputImg").src="";
+    }
+}</script>
+
+<script>
+    async function updateResults(){
+        if (!isFaceDetectionModelLoaded()) {
+        return
+      }
+      const inputImgEl = $('#inputImg').get(0)
+      const options = getFaceDetectorOptions()
+
+      const detections = await faceapi.detectAllFaces(inputImgEl, options)
+      const faceImages = await faceapi.extractFaces(inputImgEl, detections)
+
+      displayExtractedFaces(faceImages)
+    }
+    function displayExtractedFaces(faceImages) {
+      const canvas = $('#overlay').get(0)
+      faceapi.matchDimensions(canvas, $('#inputImg').get(0))
+
+      $('#facesContainer').empty()
+      faceImages.forEach(canvas => $('#facesContainer').append(canvas))
+    }
+
+    async function run() {
+      // load face detection model
+      await changeFaceDetector(selectedFaceDetector)
+
+      // start processing image
+      updateResults()
+    }
+
+    $(document).ready(function() {
+      renderNavBar('#navbar', 'face_extraction')
+      initImageSelectionControls()
+      initFaceDetectionControls()
+      run()
+    })
+</script>
+</body>
+</html>
