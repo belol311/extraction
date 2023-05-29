@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script defer src="face-api.min.js"></script>
+  <script defer src="script.js"></script>
+  <title>Face Extraction</title>
+  </head>
+
+<style>
+    body {
+      margin: 10;
+      padding: 10;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    #uploadImg{
+        position:relative;
+        top:500px;
+    }
+    
+    #inputImg {
+        position:absolute;
+        top:150px;
+        max-width: 700px;
+        max-height: 300px;
+    }
+    
+    #outputImg {
+        position:absolute;
+        top:1100px;
+        max-width: 800px;
+        max-height: 300px;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    
+</style>
+<body>
+    <input id="uploadImg" type="file" accept="image/*" onchange="showImage(this)"></input>
+    <div id="inputImg"></div>
+    <img id="outputImg" src=""/>
+
+    <script>
+      function showImage(input){
+          if(input.files && input.files[0]){
+          const reader = new FileReader();
+          reader.onload=function(e){
+              document.getElementById("inputImg").src=e.target.result;
+          };
+          reader.readAsDataURL(input.files[0]);
+      } else{
+          document.getElementById("inputImg").src="";
+      }
+  }</script>
+</body>
+</html>
